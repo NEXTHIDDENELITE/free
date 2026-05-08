@@ -7,22 +7,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ ১. আপনার MongoDB কানেকশন (পাসওয়ার্ড এনকোড করা আছে)
-const mongoURI = "mongodb+srv://nexthiddenelite:xnazim%40%23%23123.@nexthiddenelite.igyxjs9.mongodb.net/NHE_DATABASE?retryWrites=true&w=majority";
+// ✅ ১. আপনার MongoDB কানেকশন (পাসওয়ার্ড এনকোড করা ভার্সন)
+const mongoURI = "mongodb+srv://nexthiddenelite:xnazim%40%23%23123@nexthiddenelite.igyxjs9.mongodb.net/NHE_DATABASE?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
     .then(() => console.log("✅ Database Connected Successfully"))
     .catch(err => console.log("❌ DB Connection Error:", err));
 
-// ✅ ২. ডাটা মডেল (UID কে unique রাখা হয়েছে ডুপ্লিকেট আটকানোর জন্য)
+// ✅ ২. ডাটা মডেল (UID ডুপ্লিকেট আটকানোর জন্য)
 const userSchema = new mongoose.Schema({
     uid: { type: String, unique: true, required: true },
     date: { type: Date, default: Date.now }
 });
 const User = mongoose.model('User', userSchema);
 
-const BOT_TOKEN = "8475138855:AAFQMWnAHUJqGsx06QZFw60lXugY15ynkig"; //
-const CHAT_ID = "8135816344"; //
+const BOT_TOKEN = "8475138855:AAFQMWnAHUJqGsx06QZFw60lXugY15ynkig"; 
+const CHAT_ID = "8135816344"; 
 
 // ✅ ৩. মেইন সেন্ড রুট (ডুপ্লিকেট চেকসহ)
 app.post("/send", async (req, res) => {
@@ -56,6 +56,8 @@ app.post("/send", async (req, res) => {
     }
 });
 
-app.listen(3000, "0.0.0.0", () => {
-    console.log("Server is active!");
+// সার্ভার পোর্ট সেটআপ
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server is active on port ${PORT}`);
 });
