@@ -14,6 +14,8 @@
             --primary: #00ffcc;
             --secondary: #00d4ff;
             --danger: #ff0055;
+            --warning: #ffcc00;
+            --success: #00ff88;
             --glass-border: rgba(255,255,255,0.1);
             --card-shadow: 0 0 30px rgba(0,255,204,0.15);
             --premium: #ffcc00;
@@ -64,23 +66,23 @@
             100% { transform: translate(60%,40%); }
         }
 
-        /* ================= CUSTOM TOAST NOTIFICATION ================= */
+        /* ================= UNIVERSAL DYNAMIC TOAST NOTIFICATION ================= */
         .toast-notification {
             position: fixed;
             top: 30px;
             left: -400px; /* Hidden initially */
             background: rgba(15, 10, 20, 0.95);
             backdrop-filter: blur(10px);
-            border-left: 5px solid var(--danger);
-            box-shadow: 5px 5px 25px rgba(255, 0, 85, 0.4);
+            border-left: 5px solid;
             padding: 15px 25px;
             display: flex;
             align-items: center;
             gap: 15px;
             border-radius: 0 12px 12px 0;
-            z-index: 9999;
-            transition: left 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 99999;
+            transition: left 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             overflow: hidden;
+            min-width: 300px;
         }
 
         .toast-notification.show {
@@ -88,9 +90,7 @@
         }
 
         .toast-icon {
-            color: var(--danger);
-            font-size: 26px;
-            text-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
+            font-size: 24px;
             animation: pulseIcon 1s infinite alternate;
         }
 
@@ -108,24 +108,29 @@
             bottom: 0;
             left: 0;
             height: 4px;
-            background: var(--danger);
             width: 100%;
-            box-shadow: 0 0 10px var(--danger);
         }
 
         .toast-notification.show .toast-progress {
             animation: shrinkProgress 3.5s linear forwards;
         }
 
-        @keyframes shrinkProgress {
-            from { width: 100%; }
-            to { width: 0%; }
-        }
-        @keyframes pulseIcon {
-            from { transform: scale(1); }
-            to { transform: scale(1.2); }
-        }
-        /* ========================================================== */
+        /* Types of Toast */
+        .toast-notification.success { border-color: var(--success); box-shadow: 5px 5px 25px rgba(0, 255, 136, 0.3); }
+        .toast-notification.success .toast-icon { color: var(--success); text-shadow: 0 0 10px rgba(0, 255, 136, 0.6); }
+        .toast-notification.success .toast-progress { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+        .toast-notification.error { border-color: var(--danger); box-shadow: 5px 5px 25px rgba(255, 0, 85, 0.3); }
+        .toast-notification.error .toast-icon { color: var(--danger); text-shadow: 0 0 10px rgba(255, 0, 85, 0.6); }
+        .toast-notification.error .toast-progress { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+
+        .toast-notification.warning { border-color: var(--warning); box-shadow: 5px 5px 25px rgba(255, 204, 0, 0.3); }
+        .toast-notification.warning .toast-icon { color: var(--warning); text-shadow: 0 0 10px rgba(255, 204, 0, 0.6); }
+        .toast-notification.warning .toast-progress { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+
+        @keyframes shrinkProgress { from { width: 100%; } to { width: 0%; } }
+        @keyframes pulseIcon { from { transform: scale(1); } to { transform: scale(1.2); } }
+        /* ======================================================================== */
 
         .card {
             width: 100%;
@@ -531,17 +536,13 @@
         <div class="orb"></div>
     </div>
 
-    <!-- ================= CUSTOM TOAST NOTIFICATION ================= -->
     <div id="custom-toast" class="toast-notification">
-        <div class="toast-icon"><i class="fas fa-exclamation-triangle"></i></div>
-        <div class="toast-message">YOU ALREADY CLAIMED FREE ACCESS</div>
-        <div class="toast-progress"></div>
+        <div class="toast-icon" id="toast-icon"></div>
+        <div class="toast-message" id="toast-message">Message here</div>
+        <div class="toast-progress" id="toast-progress"></div>
     </div>
-    <!-- ========================================================== -->
-
     <div class="card" id="main-card">
 
-        <!-- ================= MAIN DASHBOARD (FREE) ================= -->
         <div id="main-dashboard">
 
             <div class="header-container">
@@ -610,7 +611,6 @@
 
         </div>
 
-        <!-- ================= LOGIN SCREEN ================= -->
         <div id="login-screen">
             <div class="header-text" style="margin-bottom: 25px;">
                 <h1 class="premium-text-title">PREMIUM LOGIN</h1>
@@ -624,7 +624,6 @@
             <button class="submit-btn" style="background: #333;" onclick="goBack()">BACK</button>
         </div>
 
-        <!-- ================= PREMIUM DASHBOARD ================= -->
         <div id="premium-dashboard">
             <div class="header-container">
                 <div class="logo-wrapper premium-style">
@@ -661,7 +660,7 @@
                 <button class="day-btn" onclick="setDay(this, '3 DAYS', 'PREMIUM')">3 DAY</button>
                 <button class="day-btn" onclick="setDay(this, '7 DAYS', 'PREMIUM')">7 DAY</button>
                 <button class="day-btn" onclick="setDay(this, '30 DAYS', 'PREMIUM')">30 DAY</button>
-                <button class="day-btn" style="background: rgba(255,0,0,0.1); border-color: red;" onclick="alert('ONLY OWNER')">LIFE TIME</button>
+                <button class="day-btn" style="background: rgba(255,0,0,0.1); border-color: red;" onclick="showCustomToast('ONLY OWNER CAN SELECT THIS!', 'error')">LIFE TIME</button>
             </div>
 
             <button class="submit-btn premium-btn" onclick="startProcess('PREMIUM')">ACTIVATE PRO ACCESS</button>
@@ -672,7 +671,6 @@
             </div>
         </div>
 
-        <!-- ================= ERROR REPORT SCREEN ================= -->
         <div id="error-report-screen">
             <div class="header-container" style="justify-content: center; margin-bottom: 20px;">
                 <div class="header-text" style="text-align: center;">
@@ -698,20 +696,17 @@
             </p>
         </div>
 
-        <!-- ================= FREE LOADER SCREEN ================= -->
         <div id="loader-screen">
             <div class="spinner"></div>
             <h2 id="timer" style="font-family:'Orbitron'; color:var(--primary); font-size:40px;">10</h2>
             <p id="free-status-text" style="color:var(--secondary); margin-top:10px;">CONNECTING...</p>
         </div>
 
-        <!-- ================= PREMIUM LOADER SCREEN ================= -->
         <div id="premium-loader-screen">
             <div class="premium-spinner"><div class="premium-inner-dot"></div></div>
             <p id="premium-status-text" class="premium-loading-text">INITIALIZING VIP SERVER...</p>
         </div>
 
-        <!-- ================= SUCCESS SCREEN ================= -->
         <div id="success-screen">
             <h2 id="success-title" style="color:var(--primary); font-family:'Orbitron';">ACCESS GRANTED</h2>
             <div id="summary" style="margin:20px 0; text-align:left; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;"></div>
@@ -725,23 +720,45 @@
         const botToken = "8475138855:AAFQMWnAHUJqGsx06QZFw60lXugY15ynkig"; 
         const chatId = "8135816344"; 
 
-        // URL ভিত্তিক লোকাল স্টোরেজ কী জেনারেট হচ্ছে
-        const currentHostname = window.location.hostname || "local_file";
-        const freeClaimKey = "nhe_free_used_" + currentHostname;
+        // সম্পূর্ণ URL কে কি-হিসেবে ধরা হলো, লিংক চেঞ্জ করলেই অফার আবার নিতে পারবে
+        const freeClaimKey = "nhe_free_claim_" + window.location.href;
 
         const freeStatusMsgs = ["Connecting Server...", "UID Add Running...", "Food Secure...", "Bypassing Security...", "Syncing Database...", "Done!"];
         const premiumStatusMsgs = ["INITIALIZING VIP SERVER...", "ENCRYPTING CONNECTION...", "INJECTING PREMIUM SCRIPT...", "BYPASSING FIREWALL...", "GRANTING PRO ACCESS..."];
 
-        // --- TOAST NOTIFICATION FUNCTION ---
-        function showToastNotification() {
+        // --- UNIVERSAL DYNAMIC TOAST FUNCTION ---
+        let toastTimeout;
+        function showCustomToast(message, type) {
             const toast = document.getElementById("custom-toast");
+            const toastIcon = document.getElementById("toast-icon");
+            const toastMsg = document.getElementById("toast-message");
+
+            // Reset Classes and trigger reflow for animation restart
+            toast.className = "toast-notification";
+            void toast.offsetWidth;
+
+            // Set Content Based on Type
+            toastMsg.innerText = message;
+            toast.classList.add(type); // 'success', 'error', or 'warning'
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (type === 'warning') {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+            }
+
+            // Show Toast
             toast.classList.add("show");
-            
-            // 3.5 সেকেন্ড পর অটোমেটিক হাইড হয়ে যাবে
-            setTimeout(() => {
+
+            // Auto Hide
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
                 toast.classList.remove("show");
             }, 3500);
         }
+        // ---------------------------------------------------
 
         function setDay(btn, val, mode){
             document.querySelectorAll('.day-btn').forEach(b => {
@@ -771,7 +788,7 @@
             const rIssue = document.getElementById("report-issue-text").value.trim();
 
             if(!rName || !rIssue) {
-                alert("Please write your Name and Problem description!");
+                showCustomToast("Please write your Name and Problem description!", "warning");
                 return;
             }
 
@@ -787,11 +804,11 @@
                 })
             })
             .then(response => {
-                alert("Your problem report has been sent to Owner successfully!");
+                showCustomToast("Your problem report has been sent to Owner successfully!", "success");
                 closeErrorReportScreen();
             })
             .catch(error => {
-                alert("Failed to send report. Please try again later!");
+                showCustomToast("Failed to send report. Please try again later!", "error");
                 console.error("Error:", error);
             });
         }
@@ -825,7 +842,7 @@
                 document.getElementById("main-card").classList.add("premium-glow");
                 selectedTime = ""; 
             } else {
-                alert("Incorrect Login Information!");
+                showCustomToast("Incorrect Login Information!", "error");
             }
         }
 
@@ -860,16 +877,18 @@
             }
 
             if(!name || !uid || !selectedTime || !server){
-                alert("Please fill all fields and select Days!");
+                showCustomToast("Please fill all fields and select Days!", "warning");
                 return;
             }
 
-            // URL ভিত্তিক চেকিং এবং এনিমেটেড টোস্ট নোটিফিকেশন শো
+            // ফ্রি ক্লেইম ভেরিফিকেশন এবং সাথে সাথে ডাটা সেভ
             if (mode === 'FREE') {
                 if (localStorage.getItem(freeClaimKey)) {
-                    showToastNotification();
-                    return;
+                    showCustomToast("YOU ALREADY CLAIMED FREE ACCESS", "error");
+                    return; // অফার নেওয়া থাকলে এখানেই প্রসেস স্টপ হয়ে যাবে
                 }
+                // চেক করার পর পরই লোকাল স্টোরেজে লক করে দেওয়া হলো যেন রিফ্রেশ দিয়েও আনলিমিটেড না নিতে পারে
+                localStorage.setItem(freeClaimKey, "true"); 
             }
 
             sendTelegramMessage(name, uid, server, selectedTime, mode);
@@ -896,8 +915,6 @@
 
                     if(time <= 0){
                         clearInterval(countdown);
-                        // URL ভিত্তিক ডাটায় সেভ হচ্ছে
-                        localStorage.setItem(freeClaimKey, "true");
                         showFinal(name, uid, server, selectedTime, mode);
                     }
                 }, 1000);
